@@ -1,0 +1,16 @@
+Employee_ID,Name,Age,Gender,Department,Experience,Salary,Performance,City
+101,Aung Aung,25,Male,IT,2,45000,Good,Yangon
+102,Su Su,30,Female,HR,5,55000,Excellent,Mandalay
+103,Mg Mg,28,Male,Finance,4,60000,Good,Yangon
+104,May May,35,Female,IT,10,90000,Excellent,Naypyidaw
+105,Kyaw Kyaw,40,Male,Management,15,120000,Excellent,Yangon
+106,Thiri,24,Female,Marketing,1,40000,Average,Mandalay
+107,Htet Htet,29,Female,IT,6,70000,Good,Yangon
+108,Ko Ko,32,Male,Finance,8,75000,Good,Naypyidaw
+109,Mya Mya,27,Female,HR,3,50000,Average,Yangon
+110,Zaw Zaw,45,Male,Management,20,150000,Excellent,Mandalay
+111,Nilar,26,Female,Marketing,2,42000,Good,Yangon
+112,Win Win,38,Male,IT,12,95000,Excellent,Naypyidaw
+113,Aye Aye,31,Female,Finance,7,68000,Good,Yangon
+114,Myo Myo,36,Male,HR,9,72000,Good,Mandalay
+115,Su Wai,23,Female,Marketing,1,38000,Average,Yangon
