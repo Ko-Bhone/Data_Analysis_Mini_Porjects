@@ -10,7 +10,7 @@ class HousePriceAnalysis:
 
     def load_data(self):
         try:
-            self.df = pd.read_csv(self.file_path, index_col = 0)
+            self.df = pd.read_csv(self.file_path)
             print("******Dataset Loaded Successfully******")
             print(f"File:{self.file_path}")
         except FileNotFoundError:
@@ -56,13 +56,15 @@ class HousePriceAnalysis:
         numerical_columns = ["Area","Bedrooms","Bathrooms","Stories","Parking","Age","Price"]
         for column in numerical_columns:
             if self.df[column].isnull().any():
-                median_value = (self.df[column].fillna(median_value))
+                median_value = self.df[column].median()
+                self.df[column] = (self.df[column].fillna(median_value))
                 print(f"Filled Missing Values:{column}")
         #Handle Missing Categorical values
         categorical_columns = ["Location","Property_Type"]
         for column in categorical_columns:
             if self.df[column].isnull().any():
                 mode_value = (self.df[column].mode()[0])
+                self.df[column] = self.df[column].fillna(mode_value)
                 print(f"Filled Missing Values:{column}")
         #Data Type Conversion
         integer_columns = ["House_ID","Area","Bedrooms","Bathrooms","Stories","Parking","Age"]
@@ -77,13 +79,13 @@ class HousePriceAnalysis:
         #Final Missing Value Check
         print(f"\nRemaining Missing Values...")
         print(self.df.isnull().sum())
-        print("\nData Cleaning Completed")
+        print("Data Cleaning Completed")
 
     #Basic Statistic
     def basic_statistics(self) -> None:
         if self.df is None:
             raise ValueError("Dataset has not been loaded")
-        print(f"===PRICE STATISTICS===")
+        print(f"\n===PRICE STATISTICS===")
         price = self.df["Price"].to_numpy()
         price_mean = np.mean(price)
         print(f"Mean Price: {price_mean:,.2f}")
