@@ -1,6 +1,8 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 class HousePriceAnalysis:
     def __init__(self,file_path):
@@ -102,12 +104,114 @@ class HousePriceAnalysis:
         print("Pandas Describe")
         print(self.df.describe())
 
+    def price_distribution(self) -> None:
+        print(f"\n===PRICE DISTRIBUTION===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        price = self.df["Price"].to_numpy()
+        print(f"Price Statistics...")
+        print(f"Mean: {np.mean(price):.2f}")
+        print(f"Median: {np.median(price):.2f}")
+        print(f"Standard Deviation: {np.std(price):.2f}")
+        print(f"Minimum: {np.min(price):.2f}")
+        print(f"Maximum: {np.max(price):.2f}")
+        print(f"Std Deviation: {np.std(price):.2f}")
+        plt.figure(figsize=(10,6))
+        sns.histplot(data=self.df,x="Price",bins=15,kde=True)
+        plt.title("House Price Distribution")
+        plt.xlabel("Price")
+        plt.ylabel("Number of Houses")
+        plt.tight_layout()
+        plt.savefig(self.output_dir/"price_distribution.png",dpi=300,bbox_inches="tight")
+        plt.close()
+        print("***Price Distribution Chart Saved***")
+
+    def detect_outliers(self) -> None:
+        print(f"\n===OUTLIERS DETECTION===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        price = self.df["Price"]
+        q1 = price.quantile(0.25)
+        q3 = price.quantile(0.75)
+        iqr = q3 - q1
+        lower_bound = (q1 - 1.5 * iqr)
+        upper_bound = (q3 + 1.5 * iqr)
+        print(f"Q1:{q1:,.2f}")
+        print(f"Q3:{q3:,.2f}")
+        print(f"IQR:{iqr:,.2f}")
+        print(f"Lower Bound:{lower_bound:,.2f}")
+        print(f"Upper Bound:{upper_bound:,.2f}")
+        outlier_condition = ((price < lower_bound) | (price > upper_bound))
+        self.outliers = self.df[outlier_condition].copy()
+        print(f"Number of Outliers:{len(self.outliers)}")
+        if len(self.outliers) > 0:
+            print(f"Outlier Houses")
+            print(self.outliers[["House_ID","Area","Bedrooms","Location","Property_Type","Price"]].sort_values(by="Price",ascending=False))
+        else:
+            print(f"\n No Price Outlier Detected")
+        plt.figure(figsize=(10,5))
+        sns.boxplot(data=self.df,x="Price")
+        plt.title("House Price Outlier Detection")
+        plt.xlabel("Price")
+        plt.tight_layout()
+        plt.savefig(self.output_dir/"price_boxplot.png",dpi=300,bbox_inches="tight")
+        plt.close()
+        print("Outlier box plot saved")
+
+    def outlier_summary(self) -> None:
+        print(f"\n===OUTLIER SUMMARY===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        if not hasattr(self,"outliers"):
+            self.detect_outliers()
+        if self.outliers.empty:
+            print(f"No outliers available")
+            return
+        print(f"\nOutlier by Location")
+        print(self.outliers["Location"].value_counts())
+        print(f"\nOutliers by Property Type")
+        print(self.outliers["Property_Type"].value_counts())
+        average_outlier_price = (self.outliers["Price"].mean())
+        print(f"\nAverage Outlier Price:{average_outlier_price:,.2f}")
+        highest_price_house = (self.outliers.sort_values(by="Price",ascending=False).iloc[0])
+        print("\nHighest Price Outlier")
+        print(f"House ID:{highest_price_house['House_ID']}")
+        print(f"Area:{highest_price_house['Area']}")
+        print(f"Location:{highest_price_house['Location']}")
+        print(f"Price:{highest_price_house['Price']:,.2f}")
+
+    def area_price_analysis(self) -> None:
+        print(f"\n===Area Price Analysis===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        area_price_corr = (self.df[["Area","Price"]].corr().loc["Area","Price"])
+        print("Area Price Analysis:{area_price_corr:,.4f}")
+        print("\nAverage Price by Property Type")
+        property_price = (self.df.groupby("Property_Type")["Price"].mean().sort_values(ascending=False))
+        print(property_price)
+        print("\nAverage Price by Location")
+        location_price = (self.df.groupby("Location")["Price"].mean().sort_values(ascending=False))
+        print(location_price)
+        plt.figure(figsize=(10,6))
+        sns.scatterplot(data=self.df,x="Area",y="Price",hue="Property_Type",style="Location",s=100)
+        plt.title("Area VS House Price Analysis")
+        plt.xlabel("Area")
+        plt.ylabel("Price")
+        plt.tight_layout()
+        plt.savefig(self.output_dir/"area_price_analysis.png",dpi=300,bbox_inches="tight")
+        plt.close()
+        print("\nArea VS Price Chart Saved")
+
 
     def run(self):
         self.load_data()
         self.dataset_info()
         self.clean_data()
         self.basic_statistics()
+        self.price_distribution()
+        self.detect_outliers()
+        self.outlier_summary()
+        self.area_price_analysis()
 
 if __name__ == "__main__":
     analysis = HousePriceAnalysis("datasets/house_prices.csv")
