@@ -123,6 +123,7 @@ class HousePriceAnalysis:
         plt.ylabel("Number of Houses")
         plt.tight_layout()
         plt.savefig(self.output_dir/"price_distribution.png",dpi=300,bbox_inches="tight")
+        plt.show()
         plt.close()
         print("***Price Distribution Chart Saved***")
 
@@ -155,6 +156,7 @@ class HousePriceAnalysis:
         plt.xlabel("Price")
         plt.tight_layout()
         plt.savefig(self.output_dir/"price_boxplot.png",dpi=300,bbox_inches="tight")
+        plt.show()
         plt.close()
         print("Outlier box plot saved")
 
@@ -198,10 +200,93 @@ class HousePriceAnalysis:
         plt.xlabel("Area")
         plt.ylabel("Price")
         plt.tight_layout()
+        plt.show()
         plt.savefig(self.output_dir/"area_price_analysis.png",dpi=300,bbox_inches="tight")
         plt.close()
         print("\nArea VS Price Chart Saved")
 
+    def correlation_analysis(self) -> None:
+        print(f"\n===CORRELATION ANALYSIS===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        numerical_df = self.df.select_dtypes(include=np.number)
+        correlation_matrix = numerical_df.corr()
+        print("\nCorrelation Matrix")
+        print(correlation_matrix.round(3))
+        price_correlation = (correlation_matrix["Price"].sort_values(ascending=False))
+        print(f"\nCorrelation with Price")
+        print(price_correlation.round(3))
+        positive_features = (price_correlation[price_correlation > 0.5])
+        print(f"\nStrong Positive Correlation")
+        print(positive_features.round(3))
+        negative_features = (price_correlation[price_correlation < -0.5])
+        print(f"Strong Negative Correlation")
+        print(negative_features.round(3))
+
+    def correlation_heatmap(self) -> None:
+        print(f"\n===CORRELATION ANALYSIS===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        numerical_df = self.df.select_dtypes(include=np.number)
+        correlation_matrix =(numerical_df.corr())
+        plt.figure(figsize=(12,8))
+        sns.heatmap(correlation_matrix,annot=True,fmt=".2f",cmap="coolwarm",linewidths=0.5)
+        plt.title("House Price Correlation Matrix")
+        plt.tight_layout()
+        plt.show()
+        plt.savefig(self.output_dir/"correlation_heatmap.png",dpi=300, bbox_inches="tight")
+        plt.close()
+        print("Correlation Heatmap Saved")
+
+    def feature_engineering(self) -> None:
+        print(f"\n===Feature Engineering ANALYSIS===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        self.df["Price_Per_Area"] = (self.df["Price"]/self.df["Area"])
+        self.df["Total_Rooms"] = self.df["Bedrooms"] + self.df["Bathrooms"]
+        self.df["Area_per_Bedrooms"] = self.df["Area"] / self.df["Bedrooms"]
+        age_conditions = [self.df["Age"] <= 5,
+                          self.df["Age"] <= 10,
+                          self.df["Age"] <= 20,
+                          self.df["Age"] > 20]
+        age_choices = ["New","Modern","Old","Very Old"]
+        self.df["Age_Group"] = np.select(age_conditions, age_choices, default="Unknown")
+        area_conditions = [self.df["Area"] < 1000,
+                           self.df["Area"] < 1500,
+                           self.df["Area"] < 2000,
+                           self.df["Area"] >= 2000]
+        area_choices = ["Small","Median","Large","Very Large"]
+        self.df["Area_Category"] = np.select(area_conditions, area_choices, default="Unknown")
+        self.df["Has_Parking"] = np.where(self.df["Parking"] > 0,"Yes","No")
+        new_features=["Price_Per_Area",
+                      "Total_Rooms",
+                      "Area_per_Bedrooms",
+                      "Age_Group",
+                      "Area_Category",
+                      "Has_Parking"]
+        print("\nNew Features")
+        print(self.df[new_features].head())
+        print(f"Feature Engineering Completed.")
+
+
+    def feature_analysis(self) -> None:
+        print(f"\n===Feature Engineering ANALYSIS===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        print(f"\nAverage Price By Location")
+        location_analysis = (self.df.groupby("Location")["Price"].agg(["mean","median","count"]).sort_values(by="mean",ascending=False))
+        print(location_analysis.round(2))
+        print("\nAverage Price By Property Type")
+        property_analysis = (self.df.groupby("Property_Type")["Price"].agg(["mean","median","count"]).sort_values(by="mean",ascending=False))
+        print(property_analysis.round(2))
+        print("\nAverage Price By Age Group")
+        age_analysis = (self.df.groupby("Age_Group",observed=True)["Price"].mean().sort_values(ascending=False))
+        print(f"\nAverage Price By Area Category")
+        area_analysis = (self.df.groupby("Area_Category")["Price"].mean().sort_values(ascending=False))
+        print(area_analysis.round(2))
+        print(f"\nAverage Price By Parking Availability")
+        parking_analysis = (self.df.groupby("Has_Parking")["Price"].mean().sort_values(ascending=False))
+        print(parking_analysis.round(2))
 
     def run(self):
         self.load_data()
@@ -212,6 +297,10 @@ class HousePriceAnalysis:
         self.detect_outliers()
         self.outlier_summary()
         self.area_price_analysis()
+        self.correlation_analysis()
+        self.correlation_heatmap()
+        self.feature_engineering()
+        self.feature_analysis()
 
 if __name__ == "__main__":
     analysis = HousePriceAnalysis("datasets/house_prices.csv")
