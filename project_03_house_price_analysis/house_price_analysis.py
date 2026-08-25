@@ -288,6 +288,92 @@ class HousePriceAnalysis:
         parking_analysis = (self.df.groupby("Has_Parking")["Price"].mean().sort_values(ascending=False))
         print(parking_analysis.round(2))
 
+    def prepare_ml_data(self) -> None:
+        print(f"\n===Preparing ML Data===")
+        if self.df is None:
+            raise ValueError("Dataset has not been loaded")
+        ml_df = self.df.copy()
+        column_to_drop = ["House_ID","Price_Per_Area"]
+        ml_df = ml_df.drop(columns=column_to_drop,errors="ignore")
+        print(f"\nRemoved Columns:..")
+        for i in column_to_drop:
+            print(f"\t{i}")
+        analysis_only_columns = ["Age_Group","Area_Category","Has_Parking"]
+        ml_df = ml_df.drop(analysis_only_columns,errors="ignore")
+        print(f"Removed analysis only features...")
+        for i in analysis_only_columns:
+            print(f"-{i}")
+        x = ml_df.drop(columns=["Price"])
+        y = ml_df["Price"]
+        print(f"\nFeature columns before encoding:")
+        print(x.columns.tolist())
+        print(f"\nTarget columns:")
+        print(f"Price")
+        categorical_columns = x.select_dtypes(include=["object","category"]).columns.tolist()
+        print(f"Categorical columns:")
+        print(categorical_columns)
+        x_encoded = pd.get_dummies(x,columns=categorical_columns,drop_first=True,dtype=int)
+        print(f"Features after encoding:")
+        print(x_encoded.columns.tolist())
+        boolean_columns = x_encoded.select_dtypes(include=["bool"]).columns
+        if len(boolean_columns)>0:
+            x_encoded[boolean_columns] = x_encoded[boolean_columns].astype(int)
+        self.x = x_encoded.copy()
+        self.y = y.copy()
+        print("\nX Shape:",self.x.shape)
+        print("\nY Shape:",self.y.shape)
+        print("Machine learning data Preparation Completed.")
+
+    def split_data(self,test_size:float=0.2, random_state:int=42):
+        print(f"\n Train & Test Split Data")
+        if not hasattr(self, "x"):
+            raise ValueError("\nPlease run prepare_ml_data() First..")
+        from sklearn.model_selection import train_test_split
+        self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(self.x,self.y,test_size=test_size,random_state=random_state)
+        print(f"Test Size: {test_size}")
+        print(f"Random State: {random_state}")
+        print(f"X Train Shape: {self.x_train.shape}")
+        print(f"X Test Shape: {self.x_test.shape}")
+        print(f"Y Train Shape: {self.y_train.shape}")
+        print(f"Y Test Shape: {self.y_test.shape}")
+
+    def scale_features(self) -> None:
+        print(f"\n Feature Scaling Data....")
+        if not hasattr(self,"x_train"):
+            raise ValueError("\nPlease run split_data() First..")
+        from sklearn.preprocessing import StandardScaler
+        self.scaler = StandardScaler()
+        self.x_train_scaled = self.scaler.fit_transform(self.x_train)
+        self.x_test_scaled = self.scaler.transform(self.x_test)
+        print(f"\n Standard Scaler Applied Successfully")
+        print(f"Scaled x_train Shape: {self.x_train_scaled.shape}")
+        print(f"Scaled x_test Shape: {self.x_test_scaled.shape}")
+        print(f"Scaled y_train Shape: {self.y_train.shape}")
+        print(f"Scaled y_test Shape: {self.y_test.shape}")
+
+    def save_ml_data(self) -> None:
+        print(f"\nSave processed machine learning datasets")
+        if not hasattr(self, "x_train_scaled"):
+            raise ValueError("\nPlease run scale_features() First..")
+        x_train_scaled_df = pd.DataFrame(self.x_train_scaled,columns=self.x_train.columns,index=self.x_train.index)
+        x_test_scaled_df = pd.DataFrame(self.x_test_scaled, columns=self.x_test.columns, index=self.x_test.index)
+        train_data = x_train_scaled_df.copy()
+        train_data["Price"] = self.y_train
+        train_file = self.output_dir/"train_data.csv"
+        train_data.to_csv(train_file, index=False)
+        test_data = x_test_scaled_df.copy()
+        test_data["Price"] = self.y_test
+        test_file = self.output_dir/"test_data.csv"
+        test_data.to_csv(test_file, index=False)
+        encoded_data = self.x.copy()
+        encoded_data["Price"] = self.y
+        encoded_file = self.output_dir/"ml_ready_data.csv"
+        encoded_data.to_csv(encoded_file, index=False)
+        print("****ML DATA SAVED****")
+        print(f"\nML Ready Data:{encoded_file}")
+        print(f"\nTrain Data:{train_file}")
+        print(f"Test Data:{test_file}")
+
     def run(self):
         self.load_data()
         self.dataset_info()
@@ -301,6 +387,13 @@ class HousePriceAnalysis:
         self.correlation_heatmap()
         self.feature_engineering()
         self.feature_analysis()
+        self.prepare_ml_data()
+        self.split_data()
+        self.scale_features()
+        self.save_ml_data()
+        print("\n" + "=" * 60)
+        print("HOUSE PRICE ANALYSIS COMPLETED")
+        print("=" * 60)
 
 if __name__ == "__main__":
     analysis = HousePriceAnalysis("datasets/house_prices.csv")
