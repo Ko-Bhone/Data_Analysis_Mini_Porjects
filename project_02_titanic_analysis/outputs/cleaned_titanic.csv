@@ -1,0 +1,31 @@
+PassengerId,Survived,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked,Family_Size,Is_Alone,Age_Group,Fare_Category,Survival_Label
+1,0,3,Allen,male,22.0,1,0,A21171,7.25,Unknown,S,2,No,Adult,Low,Not Survived
+2,1,1,Braund,female,38.0,1,0,PC17599,71.2833,C85,C,2,No,Middle Age,Luxury,Survived
+3,1,3,Cumings,female,26.0,0,0,STON,7.925,Unknown,S,1,Yes,Adult,Low,Survived
+4,1,1,Futrelle,female,35.0,1,0,113803,53.1,C123,S,2,No,Adult,High,Survived
+5,0,3,Allen,male,35.0,0,0,373450,8.05,Unknown,S,1,Yes,Adult,Low,Not Survived
+6,0,3,Moran,male,30.0,0,0,330877,8.4583,Unknown,Q,1,Yes,Adult,Low,Not Survived
+7,0,1,McCarthy,male,54.0,0,0,17463,51.8625,E46,S,1,Yes,Middle Age,High,Not Survived
+8,0,3,Palsson,male,2.0,3,1,349909,21.075,Unknown,S,5,No,Child,Medium,Not Survived
+9,1,3,Johnson,female,27.0,0,2,347742,11.1333,Unknown,S,3,No,Adult,Medium,Survived
+10,1,2,Nasser,female,14.0,1,0,237736,30.0708,Unknown,C,2,No,Teen,High,Survived
+11,1,3,Sandstrom,female,4.0,1,1,PP9549,16.7,G6,S,3,No,Child,Medium,Survived
+12,0,1,Bonnell,male,58.0,0,0,113783,26.55,C103,S,1,Yes,Middle Age,Medium,Not Survived
+13,0,3,Saundercock,male,20.0,0,0,A2151,8.05,Unknown,S,1,Yes,Adult,Low,Not Survived
+14,0,3,Andersson,male,39.0,1,5,347082,31.275,Unknown,S,7,No,Middle Age,High,Not Survived
+15,1,3,Vestrom,female,14.0,0,0,350406,7.8542,Unknown,S,1,Yes,Teen,Low,Survived
+16,1,2,Hewlett,female,55.0,0,0,248706,16.0,Unknown,S,1,Yes,Middle Age,Medium,Survived
+17,0,3,Rice,male,2.0,4,1,382652,29.125,Unknown,Q,6,No,Child,Medium,Not Survived
+18,1,2,Williams,male,30.0,0,0,244373,13.0,Unknown,S,1,Yes,Adult,Medium,Survived
+19,0,3,Vander,male,31.0,1,0,345763,18.0,Unknown,S,2,No,Adult,Medium,Not Survived
+20,1,1,Carter,female,49.0,1,0,113760,76.0,C23,S,2,No,Middle Age,Luxury,Survived
+21,1,2,Smith,female,29.0,0,0,239865,15.5,Unknown,S,1,Yes,Adult,Medium,Survived
+22,0,3,Brown,male,21.0,0,0,349234,7.75,Unknown,Q,1,Yes,Adult,Low,Not Survived
+23,1,1,White,female,36.0,1,1,PC11111,83.0,C50,C,3,No,Middle Age,Luxury,Survived
+24,0,2,Wilson,male,45.0,0,0,230433,13.0,Unknown,S,1,Yes,Middle Age,Medium,Not Survived
+25,1,3,Young,female,19.0,0,0,348124,7.89,Unknown,S,1,Yes,Adult,Low,Survived
+26,0,3,Green,male,32.0,0,0,347083,7.9,Unknown,S,1,Yes,Adult,Low,Not Survived
+27,1,1,Taylor,female,41.0,1,0,113501,52.0,D33,S,2,No,Middle Age,High,Survived
+28,0,2,Clark,male,28.0,0,0,SC1748,10.5,Unknown,S,1,Yes,Adult,Medium,Not Survived
+29,1,3,Lee,female,24.0,0,0,349909,8.05,Unknown,S,1,Yes,Adult,Low,Survived
+30,0,3,Walker,male,33.0,0,0,315153,7.75,Unknown,Q,1,Yes,Adult,Low,Not Survived

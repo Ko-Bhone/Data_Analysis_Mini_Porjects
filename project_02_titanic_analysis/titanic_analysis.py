@@ -3,12 +3,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from pathlib import Path
 
 class TitanicAnalysis:
     def __init__(self,file_path):
         self.file_path = file_path
         self.df = None
-        self.output_dir = "outputs"
+        self.output_dir = Path("outputs")
+        self.output_dir.mkdir(parents=True, exist_ok=True)
         sns.set_theme(style="whitegrid")
 
     # Load Dataset
@@ -102,7 +104,7 @@ class TitanicAnalysis:
         pclass = (self.df.groupby("Pclass")["Survived"].mean() * 100)
         print(pclass.round(2))
         print("\nSurvival by Age Group")
-        age_group = (self.df.groupby("Age_Group")["Survived"].mean() * 100)
+        age_group = (self.df.groupby("Age_Group", observed=True)["Survived"].mean() * 100)
         print(age_group.round(2))
         print("\nSurvival by Embarked")
         embarked = (self.df.groupby("Embarked")["Survived"].mean() * 100)
@@ -133,11 +135,12 @@ class TitanicAnalysis:
     def plot_survival_count(self) -> None:
         print("""Survival Count Plot""")
         plt.figure(figsize=(8,5))
-        sns.countplot(data = self.df["Survived"],x="Survived")
+        sns.countplot(data=self.df, x="Survived")
         plt.title("Survival Count")
         plt.xlabel("Survived")
         plt.ylabel("Passenger Count")
         plt.tight_layout()
+        plt.show()
         plt.savefig("outputs/survival_count.png",dpi=300)
         plt.close()
 
@@ -147,6 +150,7 @@ class TitanicAnalysis:
         sns.countplot(data=self.df,x="Sex",hue="Survived")
         plt.title("Survival by Gender")
         plt.tight_layout()
+        plt.show()
         plt.savefig("outputs/survival_by_gender.png",dpi=300)
         plt.close()
 
@@ -211,7 +215,7 @@ class TitanicAnalysis:
     # Age Group Distribution
     def plot_age_group(self) -> None:
         plt.figure(figsize=(8,5))
-        sns.countplot(data=self.df,x="Age Group")
+        sns.countplot(data=self.df,x="Age_Group")
         plt.title("Age Group Distribution")
         plt.xticks(rotation=15)
         plt.tight_layout()
