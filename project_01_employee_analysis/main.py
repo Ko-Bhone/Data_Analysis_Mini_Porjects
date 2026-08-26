@@ -30,3 +30,10 @@ def numpy_analysis():
     framework.load_data()
     numpy_result = framework.numpy_analysis()
     return numpy_result
+
+@app.get("/employees/features")
+def features_engineering():
+    framework = EmployeeAnalysisFramework("datasets/employee_data.csv")
+    framework.load_data()
+    features_result = framework.feature_engineering()
+    return features_result

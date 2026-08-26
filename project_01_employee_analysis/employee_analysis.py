@@ -62,7 +62,9 @@ class EmployeeAnalysisFramework:
     def feature_engineering(self):
         self.df["Salary_Per_Year"] = (self.df["Salary"] / (self.df["Experience"] + 1))
         self.df["Age_Group"] = pd.cut(self.df["Age"], bins=[0, 25, 35, 100], labels=["Young", "Adult", "Senior"])
-        print("\nFeature Engineering Completed")
+        return{
+            "new_features":["Salary_Per_Year", "Age_Group"]
+        }
 
     # Pandas Analysis
     def pandas_analysis(self):
