@@ -29,11 +29,14 @@ class EmployeeAnalysisFramework:
 
     # Data Cleaning
     def clean_data(self):
-        print("\n========== Missing Values ==========")
-        print(self.df.isnull().sum())
-        print("\n========== Duplicate Rows ==========")
-        print(self.df.duplicated().sum())
+        missing_values = (self.df.isnull().sum().to_dict())
+        duplicate_rows = int(self.df.duplicated().sum())
         self.df.drop_duplicates(inplace=True)
+        return {
+            "Missing Values": missing_values,
+            "Duplicate Rows": duplicate_rows,
+            "Row After Cleaning": self.df.shape[0]
+        }
 
     # NumPy Analysis
     def numpy_analysis(self):
