@@ -12,17 +12,20 @@ class EmployeeAnalysisFramework:
     # Load Dataset
     def load_data(self):
         self.df = pd.read_csv(self.file_path)
-        print("\nDataset Loaded Successfully")
+        return {
+            "Message":"Dataset Loaded Successfully",
+            "Rows" : self.df.shape[0],
+            "Columns": self.df.shape[1]
+        }
 
     # Dataset Information
     def data_information(self):
-        print("\n========== First 5 Rows ==========")
-        print(self.df.head())
-        print("\n========== Dataset Information ==========")
-        self.df.info()
-        print("\n========== Statistical Summary ==========")
-        print(self.df.describe())
-        print("\nShape :", self.df.shape)
+        return {
+            "columns": self.df.columns.tolist(),
+            "Shape": {"Rows": self.df.shape[0],
+                      "Columns": self.df.shape[1]},
+            "First_5_Rows": self.df.head().to_dict(orient="records")
+        }
 
     # Data Cleaning
     def clean_data(self):
