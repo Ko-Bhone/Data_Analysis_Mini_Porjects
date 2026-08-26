@@ -41,16 +41,22 @@ class EmployeeAnalysisFramework:
     # NumPy Analysis
     def numpy_analysis(self):
         salary = self.df["Salary"].values
-        print("\n========== NumPy Analysis ==========")
-        print("Average Salary :", np.mean(salary))
-        print("Median Salary :", np.median(salary))
-        print("Standard Deviation :", np.std(salary))
-        self.df["Salary_Level"] = np.where(self.df["Salary"] >= 70000,"High Salary","Low Salary")
-        conditions = [self.df["Experience"] < 3, self.df["Experience"] <= 8, self.df["Experience"] > 8]
-        choices = ["Junior", "Mid Level", "Senior"]
-        self.df["Experience_Level"] = np.select(conditions, choices, default="Unknown")
-        print("Salary Level Added")
-        print("Experience Level Added")
+        average_salary = np.mean(salary)
+        median_salary = np.median(salary)
+        standard_deviation = np.std(salary)
+        self.df["Salary_Level"] = np.where(self.df["Salary"] >= 70000, "High Salary", "Low Salary")
+        conditions = [
+            self.df["Experience"] < 3,
+            self.df["Experience"] <= 8,
+            self.df["Experience"] > 8
+        ]
+        choice = ["Junior", "Mid Level", "Senior"]
+        self.df["Experience_Level"] = np.select(conditions, choice, default="Unknown")
+        return {
+            "average_salary": float(average_salary),
+            "median_salary": float(median_salary),
+            "standard_deviation": float(standard_deviation)
+        }
 
     # Feature Engineering
     def feature_engineering(self):
@@ -109,6 +115,7 @@ class EmployeeAnalysisFramework:
         plt.savefig(f"{output}/experience_salary.png")
         plt.close()
         print("\nAll Charts Saved Successfully")
+
 
     # Complete Pipeline
     def run(self):

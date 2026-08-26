@@ -23,3 +23,10 @@ def clean_employees():
     framework.load_data()
     cleaning_result = framework.clean_data()
     return cleaning_result
+
+@app.get("/employees/numpy")
+def numpy_analysis():
+    framework = EmployeeAnalysisFramework("datasets/employee_data.csv")
+    framework.load_data()
+    numpy_result = framework.numpy_analysis()
+    return numpy_result
