@@ -68,15 +68,16 @@ class EmployeeAnalysisFramework:
 
     # Pandas Analysis
     def pandas_analysis(self):
-        print("\n========== Department Count ==========")
-        print(self.df["Department"].value_counts())
-        print("\n========== Average Salary ==========")
-        dept_salary = (self.df.groupby("Department")["Salary"].mean().sort_values(ascending=False))
-        print(dept_salary)
-        print("\n========== Top 5 Salary ==========")
-        print(self.df.sort_values(by="Salary", ascending=False).head(5))
-        print("\n========== IT Employees ==========")
-        print(self.df[self.df["Department"] == "IT"])
+        department_count = self.df["Department"].value_counts().to_dict()
+        department_salary = self.df.groupby("Department")["Salary"].mean().sort_values(ascending=False).to_dict()
+        top5_salary = self.df.sort_values(by="Salary",ascending=False).head(5).to_dict(orient="records")
+        it_employees = self.df[self.df["Department"] == "IT"].to_dict(orient="records")
+        return {
+            "Department_count": department_count,
+            "Department_salary": department_salary,
+            "Top5_Salary": top5_salary,
+            "It_Employees": it_employees
+        }
 
     # Visualization
     def visualization(self):

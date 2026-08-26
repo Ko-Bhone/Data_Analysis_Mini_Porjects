@@ -37,3 +37,10 @@ def features_engineering():
     framework.load_data()
     features_result = framework.feature_engineering()
     return features_result
+
+@app.get("/employees/pandas")
+def pandas_analysis():
+    framework = EmployeeAnalysisFramework("datasets/employee_data.csv")
+    framework.load_data()
+    pandas_result = framework.pandas_analysis()
+    return pandas_result
