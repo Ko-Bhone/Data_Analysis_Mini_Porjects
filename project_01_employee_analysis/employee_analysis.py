@@ -2,7 +2,10 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use("Agg")
 import seaborn as sns
+from pathlib import Path
 
 class EmployeeAnalysisFramework:
     def __init__(self, file_path):
@@ -117,7 +120,10 @@ class EmployeeAnalysisFramework:
         plt.title("Experience vs Salary")
         plt.savefig(f"{output}/experience_salary.png")
         plt.close()
-        print("\nAll Charts Saved Successfully")
+        return{
+            "Message":"All Charts Saved Successfully",
+            "output_directory":f"{output}"
+        }
 
 
     # Complete Pipeline
